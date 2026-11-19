@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: fitness
+      POSTGRES_USER: fitness
+      POSTGRES_PASSWORD: fitness
+    ports:
+      - "5432:5432"
+    volumes:
+      - adb-data:/var/lib/postgresql
+
+volumes:
+  adb-data:

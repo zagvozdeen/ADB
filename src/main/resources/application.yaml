@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: fitness-club
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:127.0.0.1}:${DB_PORT:5432}/${DB_NAME:fitness}
+    username: ${DB_USER:fitness}
+    password: ${DB_PASSWORD:fitness}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
