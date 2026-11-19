@@ -1,0 +1,45 @@
+@baseUrl = http://127.0.0.1:8080
+
+### Занятия без фильтров
+GET {{baseUrl}}/api/sessions
+Accept: application/json
+
+> {%
+    client.global.clear("trainerId");
+    client.global.clear("sessionId");
+    client.global.clear("sessionStartsAt");
+    client.assert(response.status === 200, "Ожидался HTTP 200");
+    const yoga = response.body
+        .filter(session => session.title === "Йога")
+        .sort((first, second) => second.id - first.id)[0];
+    client.assert(yoga !== undefined, "Сначала запусти приложение с профилем demo");
+    client.global.set("trainerId", String(yoga.trainerId));
+    client.global.set("sessionId", String(yoga.id));
+    client.global.set("sessionStartsAt", yoga.startsAt);
+%}
+
+### Занятия тренера с указанного момента
+GET {{baseUrl}}/api/sessions?trainerId={{trainerId}}&startsFrom={{sessionStartsAt}}
+Accept: application/json
+
+### Расписание тренера
+GET {{baseUrl}}/api/trainers/{{trainerId}}/schedule
+Accept: application/json
+
+### Запрос из имени метода: клиенты, отметившиеся на йоге
+GET {{baseUrl}}/api/sessions/{{sessionId}}/bookings?status=ATTENDED
+Accept: application/json
+
+> {%
+    client.global.clear("clientId");
+    client.global.clear("bookingCreatedAt");
+    client.assert(response.status === 200, "Ожидался HTTP 200");
+    const booking = response.body[0];
+    client.assert(booking && booking.status === "ATTENDED", "В демо должна быть отметка о посещении");
+    client.global.set("clientId", String(booking.clientId));
+    client.global.set("bookingCreatedAt", booking.createdAt);
+%}
+
+### Абонемент, действовавший в момент записи
+GET {{baseUrl}}/api/clients/{{clientId}}/active-membership?at={{bookingCreatedAt}}
+Accept: application/json

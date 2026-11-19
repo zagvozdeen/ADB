@@ -1,6 +1,8 @@
 spring:
   application:
     name: fitness-club
+  main:
+    web-application-type: none
   datasource:
     url: jdbc:postgresql://${DB_HOST:127.0.0.1}:${DB_PORT:5432}/${DB_NAME:fitness}
     username: ${DB_USER:fitness}
